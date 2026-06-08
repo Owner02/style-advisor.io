@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Style Advisor — Подбор лука</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">👔 Style Advisor</a>
+            <div class="nav-links">
+                <a href="index.html" class="active">Подбор</a>
+                <a href="catalog.html">Мой гардероб</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <!-- Экран опроса -->
+        <section id="survey-screen" class="screen active">
+            <div class="card">
+                <h1>Что надеть сегодня?</h1>
+                <p class="subtitle">Ответь на 3 вопроса — получи готовый лук</p>
+
+                <form id="survey-form">
+                    <!-- Вопрос 1: Повод -->
+                    <div class="question-group">
+                        <label class="question-label">Куда собираешься?</label>
+                        <div class="options-grid">
+                            <input type="radio" name="occasion" value="office" id="occ-office" hidden>
+                            <label for="occ-office" class="option-card">
+                                <span class="option-icon">💼</span>
+                                <span>В офис</span>
+                            </label>
+
+                            <input type="radio" name="occasion" value="casual" id="occ-casual" hidden>
+                            <label for="occ-casual" class="option-card">
+                                <span class="option-icon">☕</span>
+                                <span>На прогулку</span>
+                            </label>
+
+                            <input type="radio" name="occasion" value="sport" id="occ-sport" hidden>
+                            <label for="occ-sport" class="option-card">
+                                <span class="option-icon">🏃</span>
+                                <span>Спорт</span>
+                            </label>
+
+                            <input type="radio" name="occasion" value="party" id="occ-party" hidden>
+                            <label for="occ-party" class="option-card">
+                                <span class="option-icon">🎉</span>
+                                <span>Вечеринка</span>
+                            </label>
+
+                            <input type="radio" name="occasion" value="date" id="occ-date" hidden>
+                            <label for="occ-date" class="option-card">
+                                <span class="option-icon">🌹</span>
+                                <span>Свидание</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Вопрос 2: Погода -->
+                    <div class="question-group">
+                        <label class="question-label">Какая погода за окном?</label>
+                        <div class="options-grid">
+                            <input type="radio" name="weather" value="winter" id="wth-winter" hidden>
+                            <label for="wth-winter" class="option-card">
+                                <span class="option-icon">❄️</span>
+                                <span>Холодно (&lt;0°C)</span>
+                            </label>
+
+                            <input type="radio" name="weather" value="demi" id="wth-demi" hidden>
+                            <label for="wth-demi" class="option-card">
+                                <span class="option-icon">🍂</span>
+                                <span>Прохладно (0–15°C)</span>
+                            </label>
+
+                            <input type="radio" name="weather" value="summer" id="wth-summer" hidden>
+                            <label for="wth-summer" class="option-card">
+                                <span class="option-icon">☀️</span>
+                                <span>Тепло (&gt;15°C)</span>
+                            </label>
+
+                            <input type="radio" name="weather" value="rain" id="wth-rain" hidden>
+                            <label for="wth-rain" class="option-card">
+                                <span class="option-icon">🌧️</span>
+                                <span>Дождь</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Вопрос 3: Настроение (опционально) -->
+                    <div class="question-group">
+                        <label class="question-label">Какое настроение? <span class="badge">необязательно</span></label>
+                        <div class="options-grid mood-grid">
+                            <input type="radio" name="mood" value="bright" id="mood-bright" hidden>
+                            <label for="mood-bright" class="option-card">
+                                <span class="option-icon">✨</span>
+                                <span>Яркое</span>
+                            </label>
+
+                            <input type="radio" name="mood" value="calm" id="mood-calm" hidden>
+                            <label for="mood-calm" class="option-card">
+                                <span class="option-icon">🧘</span>
+                                <span>Спокойное</span>
+                            </label>
+
+                            <input type="radio" name="mood" value="dark" id="mood-dark" hidden>
+                            <label for="mood-dark" class="option-card">
+                                <span class="option-icon">🌑</span>
+                                <span>Тёмное</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="submit-survey">
+                        Подобрать лук ✨
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Экран результата -->
+        <section id="result-screen" class="screen">
+            <div class="card result-card">
+                <h2>✨ Твой лук готов!</h2>
+                <p class="subtitle" id="result-description"></p>
+
+                <div class="outfit-display" id="outfit-container">
+                    <!-- Заполняется через JS -->
+                </div>
+
+                <div class="result-actions">
+                    <button class="btn-secondary" id="retry-btn">Подобрать другой</button>
+                    <button class="btn-primary" id="back-to-survey-btn">Новый опрос</button>
+                </div>
+
+                <div class="empty-wardrobe-warning hidden" id="empty-warning">
+                    <p>⚠️ В твоём гардеробе пока нет подходящих вещей.</p>
+                    <a href="catalog.html" class="btn-outline">Добавить вещи</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/outfits.js"></script>
+    <script src="js/advisor.js"></script>
+</body>
+</html>
