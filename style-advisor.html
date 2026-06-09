@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Style Advisor — Подбор лука</title>
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --card: #ffffff;
+            --text: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --primary: #5e5ce6;
+            --primary-hover: #4b49c3;
+            --border: #e5e5ea;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --radius: 14px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        /* Навигация */
+        .navbar {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 12px 0;
+        }
+
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .nav-links { display: flex; gap: 8px; }
+
+        .nav-links button {
+            text-decoration: none;
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links button.active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Основной контейнер */
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .subtitle { color: var(--text-secondary); margin-bottom: 24px; }
+
+        /* Опрос */
+        .question-group { margin-bottom: 24px; }
+
+        .question-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .badge {
+            font-size: 12px;
+            background: #e8e8ed;
+            color: var(--text-secondary);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 400;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+        }
+
+        .option-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 16px 12px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-weight: 500;
+            font-size: 14px;
+            background: var(--card);
+        }
+
+        .option-card:hover { border-color: var(--primary); background: #f8f8ff; }
+
+        input[type="radio"] { display: none; }
+
+        input[type="radio"]:checked+.option-card {
+            border-color: var(--primary);
+            background: #f0eeff;
+            color: var(--primary);
+        }
+
+        .option-icon { font-size: 24px; }
+
+        /* Кнопки */
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        .btn-secondary {
+            background: #e8e8ed;
+            color: var(--text);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-small {
+            padding: 6px 14px;
+            font-size: 13px;
+            border-radius: 15px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: #ff3b30;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        /* Страницы */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* Результат */
+        .result-card { text-align: center; }
+
+        .outfit-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .outfit-item {
+            background: #f9f9fb;
+            border-radius: var(--radius);
+            padding: 20px;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .outfit-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #e0e0e0;
+        }
+
+        .outfit-item .item-category {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .outfit-item .item-name { font-weight: 600; margin-top: 4px; }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .result-actions .btn-primary { width: auto; margin-top: 0; }
+
+        .hidden { display: none !important; }
+
+        .empty-wardrobe-warning {
+            margin-top: 20px;
+            padding: 16px;
+            background: #fff3cd;
+            border-radius: 10px;
+        }
+
+        /* Каталог */
+        .catalog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .catalog-header .btn-primary {
+            width: auto;
+            margin-top: 0;
+            padding: 12px 24px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            background: var(--card);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        .wardrobe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .wardrobe-item {
+            background: var(--card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .wardrobe-item img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: #e0e0e0;
+        }
+
+        .wardrobe-item .item-info { padding: 12px; }
+
+        .wardrobe-item .item-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .wardrobe-item .item-meta { font-size: 12px; color: var(--text-secondary); }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon { font-size: 64px; margin-bottom: 16px; }
+
+        .data-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        /* Модальное окно */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            position: relative;
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-group { margin-bottom: 16px; }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input[type="text"],
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .photo-upload { position: relative; }
+
+        .photo-upload input[type="file"] { display: none; }
+
+        .photo-preview {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .photo-preview img { max-width: 100%; max-height: 200px; border-radius: 8px; }
+
+        /* Адаптив */
+        @media (max-width: 600px) {
+            .card { padding: 20px; }
+            .options-grid { grid-template-columns: repeat(2, 1fr); }
+            .wardrobe-grid { grid-template-columns: repeat(2, 1fr); }
+            .outfit-display { flex-direction: column; align-items: center; }
+            .result-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <span class="logo" onclick="switchPage('survey')">👔 Style Advisor</span>
+            <div class="nav-links">
+                <button id="nav-survey" class="active" onclick="switchPage('survey')">Подбор</button>
+                <button id="nav-catalog" onclick="switchPage('catalog')">Мой гардероб</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <!-- ========== СТРАНИЦА ОПРОСА ========== -->
+        <section id="page-survey" class="page active">
+            <div class="card">
+                <h1>Что надеть сегодня?</h1>
+                <p class="subtitle">Ответь на 2 вопроса — получи готовый лук</p>
+
+                <form id="survey-form">
+                    <div class="question-group">
+                        <label class="question-label">Куда собираешься?</label>
+                        <div class="options-grid">
+                            <input type="radio" name="occasion" value="office" id="occ-office">
+                            <label for="occ-office" class="option-card">
+                                <span class="option-icon">💼</span> В офис
+                            </label>
+
+                            <input type="radio" name="occasion" value="casual" id="occ-casual">
+                            <label for="occ-casual" class="option-card">
+                                <span class="option-icon">☕</span> На прогулку
+                            </label>
+
+                            <input type="radio" name="occasion" value="sport" id="occ-sport">
+                            <label for="occ-sport" class="option-card">
+                                <span class="option-icon">🏃</span> Спорт
+                            </label>
+
+                            <input type="radio" name="occasion" value="party" id="occ-party">
+                            <label for="occ-party" class="option-card">
+                                <span class="option-icon">🎉</span> Вечеринка
+                            </label>
+
+                            <input type="radio" name="occasion" value="date" id="occ-date">
+                            <label for="occ-date" class="option-card">
+                                <span class="option-icon">🌹</span> Свидание
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">Какая погода?</label>
+                        <div class="options-grid">
+                            <input type="radio" name="weather" value="winter" id="wth-winter">
+                            <label for="wth-winter" class="option-card">
+                                <span class="option-icon">❄️</span> Холодно
+                            </label>
+
+                            <input type="radio" name="weather" value="demi" id="wth-demi">
+                            <label for="wth-demi" class="option-card">
+                                <span class="option-icon">🍂</span> Прохладно
+                            </label>
+
+                            <input type="radio" name="weather" value="summer" id="wth-summer">
+                            <label for="wth-summer" class="option-card">
+                                <span class="option-icon">☀️</span> Тепло
+                            </label>
+
+                            <input type="radio" name="weather" value="rain" id="wth-rain">
+                            <label for="wth-rain" class="option-card">
+                                <span class="option-icon">🌧️</span> Дождь
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Подобрать лук ✨</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ========== СТРАНИЦА РЕЗУЛЬТАТА ========== -->
+        <section id="page-result" class="page">
+            <div class="card result-card">
+                <h2>✨ Твой лук готов!</h2>
+                <p class="subtitle" id="result-description"></p>
+                <div class="outfit-display" id="outfit-container"></div>
+                <div class="result-actions">
+                    <button class="btn-secondary" id="retry-btn">Подобрать другой</button>
+                    <button class="btn-primary" id="back-btn">Новый опрос</button>
+                </div>
+                <div class="empty-wardrobe-warning hidden" id="empty-warning">
+                    <p>⚠️ В гардеробе нет подходящих вещей.</p>
+                    <button class="btn-outline" onclick="switchPage('catalog')">Добавить вещи</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== СТРАНИЦА КАТАЛОГА ========== -->
+        <section id="page-catalog" class="page">
+            <div class="catalog-header">
+                <h1>Твой гардероб</h1>
+                <button class="btn-primary" id="add-item-btn">+ Добавить вещь</button>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Всё</button>
+                <button class="filter-btn" data-filter="top">👕 Верх</button>
+                <button class="filter-btn" data-filter="bottom">👖 Низ</button>
+                <button class="filter-btn" data-filter="shoes">👟 Обувь</button>
+                <button class="filter-btn" data-filter="outerwear">🧥 Верхняя</button>
+                <button class="filter-btn" data-filter="accessories">👜 Аксессуары</button>
+            </div>
+
+            <div class="wardrobe-grid" id="wardrobe-grid"></div>
+
+            <div class="empty-state hidden" id="empty-state">
+                <div class="empty-icon">👗</div>
+                <h3>Гардероб пуст</h3>
+                <p>Добавь первую вещь, чтобы начать подбирать луки</p>
+                <button class="btn-primary" id="empty-add-btn">+ Добавить вещь</button>
+            </div>
+
+            <div class="data-actions">
+                <button class="btn-outline" id="export-btn">📥 Экспорт</button>
+                <button class="btn-outline" id="import-btn">📤 Импорт</button>
+                <input type="file" id="import-file" accept=".json" hidden>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== МОДАЛЬНОЕ ОКНО ========== -->
+    <div class="modal hidden" id="add-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <h2>Добавить вещь</h2>
+            <form id="add-item-form">
+                <div class="form-group">
+                    <label>Название</label>
+                    <input type="text" id="item-name" placeholder="Например: Белая рубашка" required>
+                </div>
+                <div class="form-group">
+                    <label>Фото</label>
+                    <div class="photo-upload">
+                        <input type="file" id="item-photo" accept="image/*">
+                        <div class="photo-preview" id="photo-preview">
+                            <span>Нажми, чтобы выбрать фото</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Категория</label>
+                    <select id="item-category" required>
+                        <option value="">Выбери...</option>
+                        <option value="top">Верх</option>
+                        <option value="bottom">Низ</option>
+                        <option value="shoes">Обувь</option>
+                        <option value="outerwear">Верхняя одежда</option>
+                        <option value="accessories">Аксессуары</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Сезон</label>
+                    <select id="item-season" required>
+                        <option value="">Выбери...</option>
+                        <option value="winter">Зима</option>
+                        <option value="demi">Демисезон</option>
+                        <option value="summer">Лето</option>
+                        <option value="rain">Дождь</option>
+                        <option value="all">Всесезонное</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Стиль</label>
+                    <select id="item-style" required>
+                        <option value="">Выбери...</option>
+                        <option value="office">Офисный</option>
+                        <option value="casual">Повседневный</option>
+                        <option value="sport">Спортивный</option>
+                        <option value="party">Вечерний</option>
+                        <option value="date">Романтичный</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Добавить в гардероб</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ========== ХРАНИЛИЩЕ И ЛОГИКА ==========
+        const STORAGE_KEY = 'style_advisor_wardrobe_v2';
+
+        function getWardrobe() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveWardrobe(wardrobe) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(wardrobe));
+                return true;
+            } catch (e) {
+                alert('Не удалось сохранить: закончилось место в хранилище');
+                return false;
+            }
+        }
+
+        function addItem(item) {
+            const wardrobe = getWardrobe();
+            wardrobe.push({
+                id: Date.now(),
+                name: item.name,
+                photo: item.photo,
+                category: item.category,
+                season: item.season,
+                style: item.style,
+                color: item.color || '#cccccc',
+                createdAt: new Date().toISOString()
+            });
+            return saveWardrobe(wardrobe);
+        }
+
+        function deleteItem(id) {
+            const wardrobe = getWardrobe().filter(item => item.id !== id);
+            return saveWardrobe(wardrobe);
+        }
+
+        function exportWardrobe() {
+            const wardrobe = getWardrobe();
+            const blob = new Blob([JSON.stringify(wardrobe, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'wardrobe_backup.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importWardrobe(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (!Array.isArray(imported)) {
+                            reject(new Error('Неверный формат'));
+                            return;
+                        }
+                        const current = getWardrobe();
+                        const merged = [...current];
+                        imported.forEach(item => {
+                            if (!merged.find(i => i.id === item.id)) {
+                                merged.push(item);
+                            }
+                        });
+                        saveWardrobe(merged);
+                        resolve(merged.length);
+                    } catch (err) {
+                        reject(new Error('Не удалось прочитать файл'));
+                    }
+                };
+                reader.onerror = () => reject(new Error('Ошибка чтения'));
+                reader.readAsText(file);
+            });
+        }
+
+        function getOutfit(occasion, weather) {
+            const wardrobe = getWardrobe();
+            let tops = wardrobe.filter(i =>
+                i.category === 'top' &&
+                (i.season === weather || i.season === 'all') &&
+                (i.style === occasion || i.style === 'casual')
+            );
+            let bottoms = wardrobe.filter(i =>
+                i.category === 'bottom' &&
+                (i.season === weather || i.season === 'all') &&
+                (i.style === occasion || i.style === 'casual')
+            );
+            let shoes = wardrobe.filter(i =>
+                i.category === 'shoes' &&
+                (i.season === weather || i.season === 'all')
+            );
+            let outerwear = wardrobe.filter(i =>
+                i.category === 'outerwear' &&
+                (i.season === weather || i.season === 'all')
+            );
+
+            if (tops.length === 0) tops = wardrobe.filter(i => i.category === 'top');
+            if (bottoms.length === 0) bottoms = wardrobe.filter(i => i.category === 'bottom');
+            if (shoes.length === 0) shoes = wardrobe.filter(i => i.category === 'shoes');
+
+            const result = {};
+            if (outerwear.length > 0 && weather !== 'summer') {
+                result.outerwear = outerwear[Math.floor(Math.random() * outerwear.length)];
+            }
+            if (tops.length > 0) result.top = tops[Math.floor(Math.random() * tops.length)];
+            if (bottoms.length > 0) result.bottom = bottoms[Math.floor(Math.random() * bottoms.length)];
+            if (shoes.length > 0) result.shoes = shoes[Math.floor(Math.random() * shoes.length)];
+            return result;
+        }
+
+        // ========== ДЕМО-ДАННЫЕ ==========
+        function makeDemoPhoto(emoji, bg, label, textColor) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+                <rect width="200" height="200" fill="${bg}"/>
+                <text x="100" y="95" text-anchor="middle" font-size="52">${emoji}</text>
+                <text x="100" y="155" text-anchor="middle" font-size="13" fill="${textColor}" font-family="sans-serif">${label}</text>
+            </svg>`;
+            return 'data:image/svg+xml,' + encodeURIComponent(svg);
+        }
+
+        const DEMO_ITEMS = [
+            { id: 1001, name: 'Белая рубашка', photo: makeDemoPhoto('👔', '#f5f5f0', 'Белая рубашка', '#333'),
+                category: 'top', season: 'all', style: 'office', color: '#FFFFFF' },
+            { id: 1002, name: 'Чёрные брюки', photo: makeDemoPhoto('👖', '#1a1a2e', 'Чёрные брюки', '#ccc'),
+                category: 'bottom', season: 'all', style: 'office', color: '#000000' },
+            { id: 1003, name: 'Кеды', photo: makeDemoPhoto('👟', '#e8f4f8', 'Кеды', '#333'),
+                category: 'shoes', season: 'summer', style: 'casual', color: '#E8F4F8' },
+            { id: 1004, name: 'Джинсы', photo: makeDemoPhoto('👖', '#4a6fa5', 'Джинсы', '#fff'),
+                category: 'bottom', season: 'demi', style: 'casual', color: '#4A6FA5' },
+            { id: 1005, name: 'Туфли', photo: makeDemoPhoto('👞', '#2d2d2d', 'Туфли', '#ccc'),
+                category: 'shoes', season: 'all', style: 'office', color: '#2D2D2D' },
+            { id: 1006, name: 'Свитер', photo: makeDemoPhoto('🧶', '#c0392b', 'Свитер', '#fff'),
+                category: 'top', season: 'winter', style: 'casual', color: '#C0392B' },
+            { id: 1007, name: 'Пальто', photo: makeDemoPhoto('🧥', '#5d4037', 'Пальто', '#ccc'),
+                category: 'outerwear', season: 'winter', style: 'office', color: '#5D4037' },
+            { id: 1008, name: 'Шорты', photo: makeDemoPhoto('🩳', '#27ae60', 'Шорты', '#fff'),
+                category: 'bottom', season: 'summer', style: 'sport', color: '#27AE60' },
+            { id: 1009, name: 'Кроссовки', photo: makeDemoPhoto('👟', '#f39c12', 'Кроссовки', '#fff'),
+                category: 'shoes', season: 'all', style: 'sport', color: '#F39C12' },
+            { id: 1010, name: 'Сумка', photo: makeDemoPhoto('👜', '#e8daef', 'Сумка', '#333'),
+                category: 'accessories', season: 'all', style: 'casual', color: '#E8DAEF' }
+        ];
+
+        // ========== НАВИГАЦИЯ ==========
+        function switchPage(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageName).classList.add('active');
+            document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+            document.getElementById('nav-' + pageName).classList.add('active');
+            if (pageName === 'survey') {
+                document.getElementById('page-result').classList.remove('active');
+                document.getElementById('survey-form').reset();
+            }
+            if (pageName === 'catalog') renderCatalog();
+        }
+
+        // ========== ОПРОС И РЕЗУЛЬТАТ ==========
+        document.getElementById('survey-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const occasion = document.querySelector('input[name="occasion"]:checked');
+            const weather = document.querySelector('input[name="weather"]:checked');
+            if (!occasion || !weather) { alert('Выбери повод и погоду!'); return; }
+            showResult(occasion.value, weather.value);
+        });
+
+        document.getElementById('back-btn').addEventListener('click', () => switchPage('survey'));
+        document.getElementById('retry-btn').addEventListener('click', function() {
+            const occasion = document.querySelector('input[name="occasion"]:checked');
+            const weather = document.querySelector('input[name="weather"]:checked');
+            if (!occasion || !weather) return;
+            showResult(occasion.value, weather.value);
+        });
+
+        function showResult(occasion, weather) {
+            const outfit = getOutfit(occasion, weather);
+            const occasionNames = { office: 'офис', casual: 'прогулку', sport: 'спорт', party: 'вечеринку',
+                date: 'свидание' };
+            const weatherNames = { winter: 'холодную', demi: 'прохладную', summer: 'тёплую', rain: 'дождливую' };
+            document.getElementById('result-description').textContent =
+                `На ${occasionNames[occasion]||occasion} в ${weatherNames[weather]||weather} погоду:`;
+            const container = document.getElementById('outfit-container');
+            const warning = document.getElementById('empty-warning');
+            if (Object.keys(outfit).length === 0) {
+                container.innerHTML = '';
+                warning.classList.remove('hidden');
+            } else {
+                warning.classList.add('hidden');
+                const order = ['outerwear', 'top', 'bottom', 'shoes', 'accessories'];
+                const names = { outerwear: 'Верхняя одежда', top: 'Верх', bottom: 'Низ', shoes: 'Обувь',
+                    accessories: 'Аксессуары' };
+                container.innerHTML = order.filter(c => outfit[c]).map(c => `
+                    <div class="outfit-item">
+                        <img src="${outfit[c].photo}" alt="${outfit[c].name}" onerror="this.style.background='#eee'">
+                        <div class="item-category">${names[c]}</div>
+                        <div class="item-name">${outfit[c].name}</div>
+                    </div>
+                `).join('');
+            }
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-result').classList.add('active');
+        }
+
+        // ========== КАТАЛОГ ==========
+        let currentFilter = 'all';
+
+        function renderCatalog() {
+            const grid = document.getElementById('wardrobe-grid');
+            const emptyState = document.getElementById('empty-state');
+            const wardrobe = getWardrobe();
+            const filtered = currentFilter === 'all' ? wardrobe : wardrobe.filter(i => i.category ===
+                currentFilter);
+
+            if (wardrobe.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                const emojiMap = { top: '👕', bottom: '👖', shoes: '👟', outerwear: '🧥', accessories: '👜' };
+                const styleMap = { office: 'Офис', casual: 'Повседн.', sport: 'Спорт', party: 'Вечер',
+                    date: 'Романт.' };
+                const seasonMap = { winter: 'Зима', demi: 'Деми', summer: 'Лето', rain: 'Дождь', all: 'Всесезон' };
+                grid.innerHTML = filtered.map(item => `
+                    <div class="wardrobe-item">
+                        <img src="${item.photo}" alt="${item.name}" onerror="this.style.background='#e0e0e0'">
+                        <div class="item-info">
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-meta">${emojiMap[item.category]||'👗'} ${styleMap[item.style]||item.style} · ${seasonMap[item.season]||item.season}</div>
+                            <button class="btn-danger" data-id="${item.id}">🗑 Удалить</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Вешаем обработчики удаления
+                grid.querySelectorAll('.btn-danger').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        if (confirm('Удалить эту вещь?')) {
+                            deleteItem(Number(this.dataset.id));
+                            renderCatalog();
+                        }
+                    });
+                });
+            }
+        }
+
+        // Фильтры
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                renderCatalog();
+            });
+        });
+
+        // Кнопки добавить
+        function openModal() { document.getElementById('add-modal').classList.remove('hidden'); }
+
+        function closeModal() {
+            document.getElementById('add-modal').classList.add('hidden');
+            document.getElementById('add-item-form').reset();
+            document.getElementById('photo-preview').innerHTML = '<span>Нажми, чтобы выбрать фото</span>';
+        }
+
+        document.getElementById('add-item-btn').addEventListener('click', openModal);
+        document.getElementById('empty-add-btn').addEventListener('click', openModal);
+        document.getElementById('modal-close').addEventListener('click', closeModal);
+        document.querySelector('.modal-overlay').addEventListener('click', closeModal);
+
+        // Предпросмотр фото
+        document.getElementById('photo-preview').addEventListener('click', () => document.getElementById('item-photo')
+            .click());
+        document.getElementById('item-photo').addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('photo-preview').innerHTML =
+                        `<img src="${e.target.result}" alt="Предпросмотр">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Добавление вещи
+        document.getElementById('add-item-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('item-name').value.trim();
+            const category = document.getElementById('item-category').value;
+            const season = document.getElementById('item-season').value;
+            const style = document.getElementById('item-style').value;
+            const photoImg = document.querySelector('#photo-preview img');
+            let photo = '';
+            if (photoImg) {
+                photo = photoImg.src;
+            } else {
+                photo = makeDemoPhoto('👗', '#e0e0e0', name || 'Вещь', '#333');
+            }
+            if (!name || !category || !season || !style) {
+                alert('Заполни все поля!');
+                return;
+            }
+            addItem({ name, photo, category, season, style });
+            closeModal();
+            renderCatalog();
+        });
+
+        // Экспорт/импорт
+        document.getElementById('export-btn').addEventListener('click', exportWardrobe);
+        document.getElementById('import-btn').addEventListener('click', () => document.getElementById('import-file')
+            .click());
+        document.getElementById('import-file').addEventListener('change', async function() {
+            const file = this.files[0];
+            if (!file) return;
+            try {
+                const count = await importWardrobe(file);
+                alert('✅ Импортировано! Всего вещей: ' + count);
+                renderCatalog();
+            } catch (err) {
+                alert('❌ ' + err.message);
+            }
+            this.value = '';
+        });
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        if (getWardrobe().length === 0) {
+            saveWardrobe(DEMO_ITEMS);
+        }
+        renderCatalog();
+    </script>
+</body>
+</html>
